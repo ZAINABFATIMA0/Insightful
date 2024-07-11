@@ -5,8 +5,8 @@ from fb_logging import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/login/', views.login_api, name='api-login'),
-    path('api/home/', views.home_api, name='api-home'),
+    path('api/v2/', include('fb_logging.urls')),
+    path('api/v1/', include('get_insights.urls')),
     path('api/social-auth/', include('social_django.urls', namespace='social')),
-    path('api/', include('get_insights.urls')),
+
 ]
