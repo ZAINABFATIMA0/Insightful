@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "social_django",
     "fb_logging",
     "rest_framework",
-    "get_insights",
+    "fb_insights_endpoints",
 ]
 
 MIDDLEWARE = [
