@@ -9,13 +9,9 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-from datetime import timedelta
-import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
-load_dotenv()
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,10 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -40,10 +36,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "social_django",
-    "fb_logging",
     "rest_framework",
-    "fb_insights_endpoints",
+    "social_django",
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -136,15 +131,16 @@ AUTHENTICATION_BACKENDS = [
     "social_core.backends.facebook.FacebookOAuth2",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_URL = "logout"
 
-SOCIAL_AUTH_FACEBOOK_KEY = os.getenv("SOCIAL_AUTH_FACEBOOK_KEY")
-SOCIAL_AUTH_FACEBOOK_SECRET = os.getenv("SOCIAL_AUTH_FACEBOOK_SECRET")
+SOCIAL_AUTH_FACEBOOK_KEY = config("SOCIAL_AUTH_FACEBOOK_KEY")
+SOCIAL_AUTH_FACEBOOK_SECRET = config("SOCIAL_AUTH_FACEBOOK_SECRET")
 SOCIAL_AUTH_FACEBOOK_SCOPE = [
     "email", "public_profile", "pages_manage_engagement", "pages_show_list"
-    ]
+]
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/admin/"
 SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ["localhost"]
@@ -152,16 +148,8 @@ SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ["localhost"]
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
