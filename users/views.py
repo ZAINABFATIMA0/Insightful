@@ -93,9 +93,3 @@ def facebook_post_metrics_view(request):
         )
 
     return JsonResponse(response.json(), status=200)
-
-
-
-
-
-
