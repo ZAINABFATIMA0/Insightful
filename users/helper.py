@@ -106,47 +106,49 @@ class FacebookClient:
     def get_facebook_page_info(user):
         access_token, user_id = FacebookClient.get_user_access_token_and_id(user)
 
-        if access_token and user_id:
-            url = f"https://graph.facebook.com/{user_id}/accounts"
-            params = {'access_token': access_token}
-            response = requests.get(url, params=params)
-
-            if response.status_code == 200:
-                data = response.json()
-                if 'data' in data and len(data['data']) > 0:
-                    page_info = data['data'][0]
-                    return page_info.get('access_token'), page_info.get('id')
-                else:
-                    return None
-            else:
-                return None
-        else:
+        if not access_token or not user_id:
             return None
-        
+
+        url = f"https://graph.facebook.com/{user_id}/accounts"
+        params = {'access_token': access_token}
+        response = requests.get(url, params=params)
+
+        if response.status_code != 200:
+            return None
+
+        data = response.json()
+        if 'data' not in data or len(data['data']) == 0:
+            return None
+
+        page_info = data['data'][0]
+        return page_info.get('access_token'), page_info.get('id')
+
     def validate_page_metrics(requested_metrics):
-        invalid_metrics = [metric for metric in requested_metrics if metric not in FacebookClient.page_insights_metrices]
+        invalid_metrics = [
+            metric for metric in requested_metrics if metric not in FacebookClient.page_insights_metrices
+        ]
         if invalid_metrics:
             return False, invalid_metrics
         return True, None
     
     def get_facebook_posts(user):
-        
         access_token, page_id = FacebookClient.get_facebook_page_info(user)
-        if access_token and page_id:
-            url = f"https://graph.facebook.com/{page_id}/posts"
-            params = {'access_token': access_token}
-            response = requests.get(url, params=params)
+        if not access_token or not page_id:
+            return None
 
-            if response.status_code == 200:
-                return (response.json())
-            
-            else:
-                return None
+        url = f"https://graph.facebook.com/{page_id}/posts"
+        params = {'access_token': access_token}
+        response = requests.get(url, params=params)
 
-        return None
-    
+        if response.status_code != 200:
+            return None
+
+        return response.json()
+
     def validate_post_metrics(requested_metrics):
-        invalid_metrics = [metric for metric in requested_metrics if metric not in FacebookClient.post_insights_metrices]
+        invalid_metrics = [
+            metric for metric in requested_metrics if metric not in FacebookClient.post_insights_metrices
+        ]
         if invalid_metrics:
             return False, invalid_metrics
         return True, None
