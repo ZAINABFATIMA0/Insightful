@@ -101,7 +101,7 @@ class FacebookClient:
             user_id = social.extra_data.get('id', None)
             return access_token, user_id
         except UserSocialAuth.DoesNotExist:
-            return None, None
+            return None
 
     def get_facebook_page_info(user):
         access_token, user_id = FacebookClient.get_user_access_token_and_id(user)
